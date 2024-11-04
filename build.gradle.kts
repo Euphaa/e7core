@@ -3,15 +3,19 @@ import org.apache.commons.lang3.SystemUtils
 plugins {
     idea
     java
+    id("maven-publish")
     id("gg.essential.loom") version "0.10.0.+"
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
+
+
 //Constants:
 
 val baseGroup: String by project
 val mcVersion: String by project
+val group = baseGroup
 val version: String by project
 val mixinGroup = "$baseGroup.mixin"
 val modid: String by project
@@ -88,6 +92,17 @@ dependencies {
     // If you don't want to log in with your real minecraft account, remove this line
 //    runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.2.1")
 
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            groupId = group // Adjust accordingly
+            artifactId = rootProject.name // Adjust accordingly
+            version = version // Ensure this matches your versioning
+        }
+    }
 }
 
 // Tasks:

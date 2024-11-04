@@ -3,7 +3,7 @@ package io.github.euphaa.core;
 public abstract class RecurringRunnable implements Runnable
 {
     private int interval;
-    private long repeats;
+    private int repeats;
     private Runnable task;
 
     /**
@@ -12,7 +12,7 @@ public abstract class RecurringRunnable implements Runnable
      * @param repeats use -1 for effectively infinite repeats
      * @param task
      */
-    public RecurringRunnable(int interval, long repeats, Runnable task)
+    public RecurringRunnable(int interval, int repeats, Runnable task)
     {
         this.interval = interval;
         this.repeats = repeats;
