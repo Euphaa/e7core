@@ -13,7 +13,7 @@ public class Scheduler
 
 
     @SubscribeEvent
-    private static void onClientTick(TickEvent.ClientTickEvent event)
+    public void onClientTick(TickEvent.ClientTickEvent event)
     {
         currentTick++;
 
