@@ -1,22 +1,38 @@
 package io.github.euphaa.core;
 
-public abstract class RecurringRunnable implements Runnable
+/**
+ * used to make recurring events.
+ */
+public class RecurringRunnable implements Runnable
 {
-    private int interval;
     private int repeats;
     private Runnable task;
+    private Registerer registerer;
 
     /**
      *
-     * @param interval minecraft ticks
      * @param repeats use -1 for effectively infinite repeats
-     * @param task
+     * @param registerer used to repeatedly register this RecurringRunnable to any executor service. return early inside or call RecurringRunnable::setCancelled on this to stop it.
+     *                   ex: (self) -> Scheduler.setTimeout(self, 100)
+     * @param task main task to be run
      */
-    public RecurringRunnable(int interval, int repeats, Runnable task)
+    public RecurringRunnable(int repeats, Registerer registerer, Runnable task)
     {
-        this.interval = interval;
         this.repeats = repeats;
         this.task = task;
+        this.registerer = registerer;
+        this.registerer.reschedule(this);
+    }
+
+    public void setCancelled()
+    {
+        this.registerer = (a) -> {};
+        this.task = () -> {};
+    }
+
+    public void setOneMoreRepeat()
+    {
+        this.repeats = 0;
     }
 
     @Override
@@ -26,7 +42,7 @@ public abstract class RecurringRunnable implements Runnable
 
         if (repeats == 0) return;
 
-        Scheduler.newTask(interval, task);
+        registerer.reschedule(this);
         repeats--;
     }
 }

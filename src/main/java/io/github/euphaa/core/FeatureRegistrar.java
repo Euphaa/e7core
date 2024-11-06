@@ -13,20 +13,14 @@ import java.util.HashSet;
  */
 public class FeatureRegistrar
 {
-
+    private static short currentTick = 0;
     private static final HashSet<EventManager> ALL_FEATURES = new HashSet<>();
     private static final HashSet<EventManager> RUNNING_FEATURES = new HashSet<>();
 
-    @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event)
-    {
-        refreshFeatures();
-    }
-
     /**
-     * called every client tick to change what EventManagers are listening to events.
+     * called every other client tick to change what EventManagers are listening to events.
      */
-    static void refreshFeatures()
+    public static void refreshFeatures()
     {
         for (EventManager feature : ALL_FEATURES)
         {
@@ -43,7 +37,7 @@ public class FeatureRegistrar
     }
 
     /**
-     * this is where you should register all features from within the mod.
+     * this is where you should register all features from within the mod. use on or after FMLInitializationEvent
      * @param feature - an event handler that can be enabled or disabled by registering
      *                or unregistering from the forge event bus
      * @param enabled - whether the feature should be enabled or disabled by default;
@@ -57,19 +51,34 @@ public class FeatureRegistrar
         }
     }
 
+    /**
+     * registers to the MinecraftForge.EVENT_BUS
+     * @param feature
+     */
     private static void register(EventManager feature)
     {
         MinecraftForge.EVENT_BUS.register(feature);
         RUNNING_FEATURES.add(feature);
     }
 
+    /**
+     * unregisters from the MinecraftForge.EVENT_BUS
+     * @param feature
+     */
     private static void unRegister(EventManager feature)
     {
         MinecraftForge.EVENT_BUS.unregister(feature);
         RUNNING_FEATURES.remove(feature);
     }
 
-
+    @SubscribeEvent
+    public void _onClientTick(TickEvent.ClientTickEvent event)
+    {
+        if (++currentTick % 2 == 0)
+        {
+            refreshFeatures();
+        }
+    }
 }
 
 

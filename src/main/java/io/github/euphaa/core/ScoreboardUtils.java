@@ -88,7 +88,6 @@ public class ScoreboardUtils
 
     /**
      * strips minecraft color and formatting codes from text
-     *
      * @param input
      * @return
      */
